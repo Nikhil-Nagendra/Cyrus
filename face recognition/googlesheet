@@ -1,0 +1,29 @@
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
+
+# Replace 'YOUR_SHEET_ID' and 'YOUR_RANGE' with the appropriate values
+SHEET_ID = '1ZPckM9uwcLgku8ozGg72xc-X0CTSnvamtQnqeFu18u4'
+RANGE_NAME = '0'
+
+def get_google_sheets_data():
+    # Load the credentials file (replace 'credentials.json' with your file)
+    credentials = service_account.Credentials.from_service_account_file('credentials.json', scopes=['https://www.googleapis.com/auth/spreadsheets.readonly'])
+
+    # Connect to Google Sheets API
+    service = build('sheets', 'v4', credentials=credentials)
+
+    # Retrieve values from the specified sheet and range
+    result = service.spreadsheets().values().get(spreadsheetId=SHEET_ID, range=RANGE_NAME).execute()
+    values = result.get('values', [])
+
+    return values
+
+if __name__ == '__main__':
+    sheet_data = get_google_sheets_data()
+
+    if sheet_data:
+        print("Google Sheets Data:")
+        for row in sheet_data:
+            print(row)
+    else:
+        print("No data found.")
